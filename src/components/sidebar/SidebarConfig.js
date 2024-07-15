@@ -86,11 +86,11 @@ export const SidebarConfig = [
                 route: "/admin/customers",
                 icon: "bx bx-user-pin",
             },
-            {
-                display_name: "NV Bán hàng",
-                route: "/admin/sellers",
-                icon: "bx bx-user-pin",
-            },
+            // {
+            //     display_name: "NV Bán hàng",
+            //     route: "/admin/sellers",
+            //     icon: "bx bx-user-pin",
+            // },
         ]
     },
     {
@@ -186,11 +186,11 @@ export const SidebarConfig = [
                 route: "/admin/report/supplier",
                 icon: "bx bx-store-alt",
             },
-            {
-                display_name: "NV Bán hàng",
-                route: "/admin/report/seller",
-                icon: "bx bx-store-alt",
-            }
+            // {
+            //     display_name: "NV Bán hàng",
+            //     route: "/admin/report/seller",
+            //     icon: "bx bx-store-alt",
+            // }
         ]
     },
     {
