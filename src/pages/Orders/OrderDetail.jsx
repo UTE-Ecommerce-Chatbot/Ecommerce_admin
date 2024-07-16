@@ -136,7 +136,12 @@ function OrderDetail(props) {
                   toast.success("Cập nhật trạng thái thành công!");
                   getData();
                 })
-                .catch((err) => toast.error(err.response.data.message));
+                .catch((err) => {
+                  setLoading(false);
+                  toast.error(err.response.data.message)
+                  getData();
+                }
+              );
             })
             .catch((err) => console.log(err));
         } else {
@@ -151,7 +156,11 @@ function OrderDetail(props) {
                   toast.success("Cập nhật trạng thái thành công!");
                   getData();
                 })
-                .catch((err) => toast.error(err.response.data.message));
+                .catch((err) => {                 
+                   setLoading(false);
+                  toast.error(err.response.data.message)});
+                   getData();
+
             })
             .catch((err) => console.log(err));
         }
