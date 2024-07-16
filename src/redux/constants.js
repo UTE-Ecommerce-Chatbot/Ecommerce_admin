@@ -1,5 +1,5 @@
-// export const API_URL = "http://localhost:8080"
-export const API_URL = process.env.REACT_APP_BASE_URL;
+export const API_URL = "http://localhost:8087"
+// export const API_URL = process.env.REACT_APP_BASE_URL;
 export const IMAGE_FOLDER = `${API_URL}/images/product/`
 // export const API_URL_WEB = "https://shielded-sea-59884.herokuapp.com"
 
