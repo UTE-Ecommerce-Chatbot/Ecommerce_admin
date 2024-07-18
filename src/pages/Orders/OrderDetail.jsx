@@ -13,7 +13,7 @@ import {
   getDetailOrderById,
   confirmOrder,
   cancelOrder,
-  shippingOrder
+  shippingOrder,
 } from "services/OrderServices";
 import { createOrderGHN } from "services/GHNServices";
 import { currency } from "utils/formatCurrency";
@@ -117,6 +117,7 @@ function OrderDetail(props) {
           .catch((err) => {
             setLoading(false);
             toast.warning(err.response.data.message);
+            console.log("Error: Hủy rồi muốn hủy nữa");
           });
         break;
       case 1:
@@ -125,7 +126,7 @@ function OrderDetail(props) {
           weight: orderInfo.weight,
           length: orderInfo.length,
           width: orderInfo.width,
-          height: orderInfo.height
+          height: orderInfo.height,
         };
         if (orderInfo?.ship_type === 1) {
           createOrderGHN(order)
@@ -138,15 +139,19 @@ function OrderDetail(props) {
                 })
                 .catch((err) => {
                   setLoading(false);
-                  toast.error(err.response.data.message)
-                  getData();
-                }
-              );
+                  toast.warning("Đơn hàng đã hủy, không thể xác nhận");
+                  console.log(err.response.data.message);
+                  // getData();
+                });
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              setLoading(false);
+              toast.error(err.response.data.message);
+              console.log(err);
+            });
         } else {
           const order = {
-            id: id
+            id: id,
           };
           createOrderGHTK(order)
             .then((res) => {
@@ -156,13 +161,17 @@ function OrderDetail(props) {
                   toast.success("Cập nhật trạng thái thành công!");
                   getData();
                 })
-                .catch((err) => {                 
-                   setLoading(false);
-                  toast.error(err.response.data.message)});
-                   getData();
-
+                .catch((err) => {
+                  setLoading(false);
+                  toast.warning(err.response.data.message);
+                });
+              getData();
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              setLoading(false);
+              toast.error(err.response.data.message);
+              console.warning(err.response.data.message);
+            });
         }
         break;
       case 2:
@@ -174,10 +183,12 @@ function OrderDetail(props) {
           })
           .catch((err) => {
             setLoading(false);
-            toast.warning(err.response.data.message)
+            toast.warning(err.response.data.message);
           });
         break;
       default:
+        setLoading(false);
+        toast.warning("Chưa chọn trạng thái!");
         break;
     }
   };
@@ -208,8 +219,6 @@ function OrderDetail(props) {
     return total;
   };
 
-
-
   return (
     <>
       {loading ? (
@@ -224,7 +233,7 @@ function OrderDetail(props) {
             <div className="col-12">
               <div className="card">
                 <div className="card__body">
-                  <Grid container >
+                  <Grid container>
                     <Grid item sm={12}>
                       <div className="cRRvpz">
                         <div className="gQjSfs">
@@ -232,7 +241,14 @@ function OrderDetail(props) {
                           <div className="content">
                             <p className="name">{userInfo.user_fullname}</p>
                             <p className="address">
-                              <span>Địa chỉ: </span>{orderInfo.address + ',' + orderInfo.ward + ', ' + orderInfo.district + ', ' + orderInfo.province}
+                              <span>Địa chỉ: </span>
+                              {orderInfo.address +
+                                "," +
+                                orderInfo.ward +
+                                ", " +
+                                orderInfo.district +
+                                ", " +
+                                orderInfo.province}
                             </p>
                             <p className="phone">
                               <span>Điện thoại: </span>
@@ -244,15 +260,27 @@ function OrderDetail(props) {
                           <div className="title">Hình thức giao hàng</div>
                           <div className="content">
                             <p>
-                              <img src="https://salt.tikicdn.com/ts/upload/2a/47/46/0e038f5927f3af308b4500e5b243bcf6.png" width="56" alt="TikiFast" />
+                              <img
+                                src="https://salt.tikicdn.com/ts/upload/2a/47/46/0e038f5927f3af308b4500e5b243bcf6.png"
+                                width="56"
+                                alt="TikiFast"
+                              />
                             </p>
-                            <p>Được giao bởi: {orderInfo?.ship_type === 2 ? 'Giao Hàng Tiết Kiệm' : 'Giao Hàng Nhanh'}</p>
-                            {
-                              orderInfo?.ship_order_code && orderInfo?.ship_order_code !== null ? (
-                                <p>Mã vận đơn: {orderInfo?.ship_order_code}</p>
-                              ) : ''
-                            }
-                            <p>Phí vận chuyển: {currency(orderInfo?.ship_fee)}</p>
+                            <p>
+                              Được giao bởi:{" "}
+                              {orderInfo?.ship_type === 2
+                                ? "Giao Hàng Tiết Kiệm"
+                                : "Giao Hàng Nhanh"}
+                            </p>
+                            {orderInfo?.ship_order_code &&
+                            orderInfo?.ship_order_code !== null ? (
+                              <p>Mã vận đơn: {orderInfo?.ship_order_code}</p>
+                            ) : (
+                              ""
+                            )}
+                            <p>
+                              Phí vận chuyển: {currency(orderInfo?.ship_fee)}
+                            </p>
                           </div>
                         </div>
                         <div className="gQjSfs">
@@ -341,9 +369,7 @@ function OrderDetail(props) {
                           className={classes.formControl}
                           variant="outlined"
                         >
-                          <InputLabel
-                            className={classes.text}
-                          >
+                          <InputLabel className={classes.text}>
                             Cập nhật trạng thái đơn hàng
                           </InputLabel>
                           <Select
